@@ -1,0 +1,6 @@
+@use '../base/variables' as *;
+@use '../utilities/mixins' as *;
+
+body {
+    background-color: $background-colour;
+}

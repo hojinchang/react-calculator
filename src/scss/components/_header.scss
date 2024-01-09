@@ -1,0 +1,10 @@
+@use '../base/variables' as *;
+@use '../utilities/mixins' as *;
+
+header {
+    @include flex-row(center, center);
+    width: 100%;
+    background-color: $header-colour;
+    color: white;
+    padding: $padding;
+}

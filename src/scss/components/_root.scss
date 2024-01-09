@@ -1,0 +1,7 @@
+@use '../utilities/mixins' as *;
+
+#root {
+    height: 100vh;
+    width: 100%;  
+    @include flex-column(space-between, center, 100px);
+}
