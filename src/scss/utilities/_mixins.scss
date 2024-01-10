@@ -21,3 +21,8 @@
     align-items: $align-items;
     gap: $gap;
 }
+
+@mixin border($radius) {
+    border: 2px solid;
+    border-radius: $radius;
+}

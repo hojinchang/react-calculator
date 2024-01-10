@@ -1,0 +1,57 @@
+@use '../base/variables' as *;
+@use '../utilities/mixins' as *;
+
+.calculator {
+    background-color: $calculator-colour;
+    padding: $padding;
+    width: 500px;
+    @include border(16px);
+
+    .display {
+        background-color: $background-colour;
+        width: auto;
+        height: 100px;
+        @include border(8px);
+    }
+
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-gap: 10px;
+        margin-top: 18px;
+
+        button {
+            height: 60px;
+            font-size: 24px;
+            @include border(8px);
+        }
+
+        button:last-child {
+            grid-column: 1 / -1;
+        }
+
+        button[data-action="clear"] {
+            background-color: $button-colour-1;
+        }
+
+        button[data-action="special-operator"] {
+            background-color: $button-colour-2;
+        }
+
+        button[data-action="operator"] {
+            background-color: $button-colour-3;
+        }
+
+        button[data-action="memory"] {
+            background-color: $button-colour-4;
+        }
+
+        button[data-action="enter"] {
+            background-color: $button-colour-5;
+        }
+
+        button:active {
+            transform: translateY(2px);
+        }
+    }
+}

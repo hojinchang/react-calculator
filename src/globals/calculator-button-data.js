@@ -126,13 +126,13 @@ export const calculatorButtons = [
         value: 0,
     },
     {
-        type: 'decimal',
+        type: 'special-operator',
         className: 'decimal',
         text: '.',
         value: '.',
     },
     {
-        type: 'sign',
+        type: 'special-operator',
         className: 'sign',
         text: '+/-',
         value: '+/-',
