@@ -7,9 +7,10 @@ import Button from './CalculatorButtons';
 
 // Helper function imports
 import {
-    allClear,
-    clear,
-    setNumber,
+    onAllClearClick,
+    onClearClick,
+    onNumberClick,
+    onOperatorClick,
 } from '../utils/calculatorFunctions';
 
 function Calculator() {
@@ -24,19 +25,21 @@ function Calculator() {
         const btnValue = e.target.value;
         console.log(btnType, btnValue, currentNum)
 
-        if (btnType === "number") {
-            setNumber(maxDigits, btnValue, setCurrentNum);
-        } else if (btnType === "allClear") {
-            allClear(setCurrentNum, setPreviousNum, setOperator);
-        } else if (btnType === "clear") {
-            clear(setCurrentNum);
+        switch(btnType) {
+            case "allClear":
+                onAllClearClick(setCurrentNum, setPreviousNum, setOperator);
+                break;
+            case "clear":
+                onClearClick(setCurrentNum);
+                break;
+            case "number":
+                onNumberClick(maxDigits, btnValue, setCurrentNum, currentNum);
+                break;
+            case "operator":
+                onOperatorClick(btnValue, setOperator, currentNum, setPreviousNum, setCurrentNum);
+                break;
         }
-    }
 
-    function renderDisplay(updatedNumber) {
-        if (currentNum === 0) {
-            return updatedNumber;
-        }
     }
 
     function renderButtons() {
