@@ -12,51 +12,53 @@ import {
     Reset the state of the calculator
     Clear the saved numbers and the pending calculations
 */
-function onAllClearClick(setFirstOperand, setSecondOperand, setOperator) {
-    setFirstOperand("0");
-    setSecondOperand(null);
+function onAllClearClick(setDisplayNum, setFirstOperand, secondOperand, setOperator) {
+    setDisplayNum("0");
+    setFirstOperand(null);
+    secondOperand(null);
     setOperator(null);
 }
 
 // Clear the current number
-function onClearClick(firstOperand, setFirstOperand, setSecondOperand) {
+function onClearClick(firstOperand, setFirstOperand, secondOperand) {
     if (firstOperand) {
-        setSecondOperand(null);
-        setCurrentNum("0");
+        setDisplayNum("0");
+        secondOperand(null);
     } else {
         setFirstOperand(null);
     }
 }
 
 // Add new digit to the current number
-function onNumberClick(maxDigits, newDigit, currentNum, setCurrentNum) {
+function onNumberClick(maxDigits, newDigit, displayNum, setDisplayNum) {
     let newNum;
-    if (currentNum === "0") currentNum = "";   // Delete placeholder "0"        
-    (currentNum.length < maxDigits)   // Limit number to max digits
-        ? newNum = currentNum + newDigit
-        : newNum = currentNum
+    if (displayNum === "0") displayNum = "";   // Delete placeholder "0"        
+    (displayNum.length < maxDigits)   // Limit number to max digits
+        ? newNum = displayNum + newDigit
+        : newNum = displayNum
     
-    setCurrentNum(currentNum + newDigit);
+    setDisplayNum(displayNum + newDigit);
 }
 
 // Operator button functionality
 function onOperatorClick(
     selectedOperator,
     currentOperator,
-    currentNum,
+    displayNum,
     setOperator,
     setFirstOperand,
-    setCurrentNum,
+    setDisplayNum,
 ) {
 
     if (!currentOperator) {
         setOperator(selectedOperator);
-        setFirstOperand(currentNum);
-        setCurrentNum("0");
+        setFirstOperand(displayNum);
+        setDisplayNum("0");
     } else {
         setOperator(selectedOperator);
     }
 }
+
 
 export {
     onAllClearClick,

@@ -11,13 +11,12 @@ import {
     onClearClick,
     onNumberClick,
     onOperatorClick,
-    onEqualsClick,
 } from '../utils/calculatorFunctions';
 
 function Calculator() {
-    const [firstOperand, setFirstOperand] = useState("0");
+    const [firstOperand, setFirstOperand] = useState(null);
     const [secondOperand, setSecondOperand] = useState(null);
-    const [currentNum, setCurrentNum] = useState("0");
+    const [displayNum, setDisplayNum] = useState("0");
     const [operator, setOperator] = useState(null);
 
     const maxDigits = 13;   // Max number of digits on calculator display
@@ -25,21 +24,21 @@ function Calculator() {
     function onBtnClick(e) {
         const btnType = e.target.dataset.action;
         const btnValue = e.target.value;
-        console.log(btnType, btnValue, currentNum)
+        // console.log(btnType, btnValue, displayNum)
 
         switch (btnType) {
             case "allClear":
-                onAllClearClick(setFirstOperand, setSecondOperand, setOperator);
+                onAllClearClick(setDisplayNum, setFirstOperand, setSecondOperand, setOperator);
                 break;
             case "clear":
                 onClearClick(firstOperand, setFirstOperand, setSecondOperand);
                 break;
             case "number":
-                onNumberClick(maxDigits, btnValue, currentNum, setCurrentNum);
+                onNumberClick(maxDigits, btnValue, displayNum, setDisplayNum);
                 break;
             case "operator":
-                onOperatorClick(btnValue, operator, currentNum, setOperator, setFirstOperand, setCurrentNum);
-                break;
+                onOperatorClick(btnValue, operator, displayNum, setOperator, setFirstOperand, setDisplayNum);
+                break;  
         }
 
     }
@@ -55,7 +54,7 @@ function Calculator() {
     return (
         <div className="calculator">
             <div className="display">
-                {currentNum}
+                {displayNum}
             </div>
             <div className="buttons">
                 {renderButtons()}
