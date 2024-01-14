@@ -8,27 +8,37 @@ import {
     polarity
 } from './operations';
 
-
-function _resetState(setFirstOperand, setSecondOperand, setOperator) {
-    setFirstOperand(null);
-    setSecondOperand(null);
-    setOperator(null);
-}
-
 /* 
     Reset the state of the calculator
     Clear the saved numbers and the pending calculations
 */
-function onAllClearClick(setDisplayNum, setFirstOperand, setSecondOperand, setOperator) {
+function resetState(
+    setDisplayNum, 
+    setFirstOperand, 
+    setSecondOperand, 
+    setOperator,
+    setPerformedCalculation
+) {
     setDisplayNum("0");
-    _resetState(setFirstOperand, setSecondOperand, setOperator);
+    setFirstOperand(null);
+    setSecondOperand(null);
+    setOperator(null);
+    setPerformedCalculation(false);
 }
 
 // Clear the current displayed number
-function onClearClick(operator, setDisplayNum, setFirstOperand, setSecondOperand, setOperator) {
+function onClearClick(
+    performedCalculation, 
+    setDisplayNum, 
+    setFirstOperand, 
+    setSecondOperand, 
+    setOperator,
+    setPerformedCalculation
+) {
     // If an operation has just been perform, reset the calculator state
-    if (operator) {
-        _resetState(setFirstOperand, setSecondOperand, setOperator);
+    if (performedCalculation) {
+        resetState(setDisplayNum, setFirstOperand, setSecondOperand, setOperator, setPerformedCalculation);
+        setPerformedCalculation(false);
     }
 
     setDisplayNum("0");
@@ -39,27 +49,9 @@ function onNumberClick(
     maxDigits, 
     newDigit, 
     displayNum, 
-    performedCalculation, 
     setDisplayNum,
-    setFirstOperand,
-    setSecondOperand, 
-    setOperator,
-    setPerformedCalculation
 ) {
-    
-    /*
-        Checks whether a previous operation was performed.
-        If so, reset the current displayed number and set the calculation flag to false
 
-        This allows the user to enter in a new number during chains of operations
-    */
-    if (performedCalculation) {
-        displayNum = "";
-        setPerformedCalculation(false);
-    }
-
-    
-    
     let newNum;
     if (displayNum === "0") displayNum = "";   // Delete placeholder "0"        
     (displayNum.length < maxDigits)   // Limit number to max digits
@@ -74,27 +66,51 @@ function onOperatorClick(
     selectedOperator,
     displayNum,
     firstOperand,
-    secondOperand,
     performedCalculation,
-    setOperator,
-    setFirstOperand,
     setDisplayNum,
+    setFirstOperand,
+    setOperator,
+    setPerformedCalculation
 ) {
+
+    /*
+        Checks whether a previous operation was performed.
+        If so, reset the current displayed number and set the calculation flag to false
+
+        This allows the user to enter in a new number during chains of operations
+    */
+    // if (performedCalculation) {
+    //     setDisplayNum("0");
+    //     setPerformedCalculation(false);
+    // }
 
     // if (!firstOperand) {
     //     setOperator(selectedOperator);
     //     setFirstOperand(displayNum);
     //     setDisplayNum("0");
-    // } else {
+    // } else if (firstOperand && performedCalculation) {   // Update the operator to perform chain of operations
     //     setOperator(selectedOperator);
     // }
 
-
+    // If the first operand is not set, set it
     if (!firstOperand) {
         setOperator(selectedOperator);
         setFirstOperand(displayNum);
         setDisplayNum("0");
-    } else if (firstOperand && performedCalculation) {   // Update the operator to perform chain of operations
+    } 
+    /*
+        Checks whether a previous operation was performed.
+        If so, reset the current displayed number and set the calculation flag to false
+
+        This allows the user to enter in a new number during chains of operations
+    */
+    else if (performedCalculation) {
+        setDisplayNum("0");
+        setPerformedCalculation(false);   // Set the performedCalculation state to false to allow user to perform another operation
+        setOperator(selectedOperator);
+    } 
+    // Only reset the operator when nothing is input yet 
+    else if (displayNum === "") {
         setOperator(selectedOperator);
     }
 }
@@ -109,7 +125,6 @@ function onEqualsClick(
     setDisplayNum,
     setFirstOperand,
     setSecondOperand,
-    setOperator,
     setPerformedCalculation,
 ) {
 
@@ -126,7 +141,7 @@ function onEqualsClick(
         The second case allows the second operand to be set to the current displayed number
         if a chain of operations is being performed.
     */
-    if (!secondOperand || (secondOperand || !performedCalculation)) {
+    if (!secondOperand || (secondOperand && !performedCalculation)) {
         secondOperand = displayNum;
         setSecondOperand(secondOperand);
     }
@@ -155,7 +170,7 @@ function onEqualsClick(
 
 
 export {
-    onAllClearClick,
+    resetState,
     onClearClick,
     onNumberClick,
     onOperatorClick,

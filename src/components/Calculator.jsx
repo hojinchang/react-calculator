@@ -7,7 +7,7 @@ import Button from './CalculatorButtons';
 
 // Helper function imports
 import {
-    onAllClearClick,
+    resetState,
     onClearClick,
     onNumberClick,
     onOperatorClick,
@@ -30,22 +30,30 @@ function Calculator() {
 
         switch (btnType) {
             case "allClear":
-                onAllClearClick(setDisplayNum, setFirstOperand, setSecondOperand, setOperator);
+                resetState(
+                    setDisplayNum, 
+                    setFirstOperand, 
+                    setSecondOperand, 
+                    setOperator,
+                    setPerformedCalculation
+                );
                 break;
             case "clear":
-                onClearClick(operator, setDisplayNum, setFirstOperand, setSecondOperand, setOperator);
+                onClearClick(
+                    performedCalculation, 
+                    setDisplayNum, 
+                    setFirstOperand, 
+                    setSecondOperand, 
+                    setOperator,
+                    setPerformedCalculation
+                );
                 break; 
             case "number":
                 onNumberClick(
                     maxDigits, 
                     btnValue, 
-                    displayNum, 
-                    performedCalculation,
+                    displayNum,
                     setDisplayNum,
-                    setFirstOperand,
-                    setSecondOperand,
-                    setOperator,
-                    setPerformedCalculation
                 );
                 break;
             case "operator":
@@ -53,11 +61,11 @@ function Calculator() {
                     btnValue, 
                     displayNum, 
                     firstOperand,
-                    secondOperand,
                     performedCalculation,
-                    setOperator, 
-                    setFirstOperand, 
-                    setDisplayNum, 
+                    setDisplayNum,
+                    setFirstOperand,
+                    setOperator,
+                    setPerformedCalculation   
                 );
                 break;
             case "equal":
@@ -70,7 +78,6 @@ function Calculator() {
                     setDisplayNum, 
                     setFirstOperand, 
                     setSecondOperand,
-                    setOperator,
                     setPerformedCalculation
                 );
                 break;

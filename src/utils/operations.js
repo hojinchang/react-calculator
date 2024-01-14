@@ -15,6 +15,10 @@ function multiply(x, y) {
 
 // Divide second number from first number
 function divide(x, y) {
+    if (Number(y) === 0) {
+        return "Cannot divide by 0";
+    }
+
     return Number(x) / Number(y);
 }
 
