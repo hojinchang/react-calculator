@@ -59,10 +59,49 @@ function onOperatorClick(
     }
 }
 
+function onEqualsClick(
+    operator, 
+    displayNum, 
+    firstOperand,
+    secondOperand,
+    setDisplayNum,
+    setFirstOperand,
+    setSecondOperand
+) {
+    if (!firstOperand) {
+        return;
+    }
+
+    if (!secondOperand) {
+        secondOperand = displayNum;
+        setSecondOperand(secondOperand);
+    }
+
+    let result;
+    switch (operator) {
+        case "add":
+            result = add(firstOperand, secondOperand);
+            break;
+        case "subtract":
+            result = subtract(firstOperand, secondOperand);
+            break;
+        case "multiply":
+            result = multiply(firstOperand, secondOperand);
+            break;
+        case "divide":
+            result = divide(firstOperand, secondOperand);
+            break;
+    }
+
+    setFirstOperand(String(result));
+    setDisplayNum(String(result));
+}
+
 
 export {
     onAllClearClick,
     onClearClick,
     onNumberClick,
     onOperatorClick,
+    onEqualsClick,
 }

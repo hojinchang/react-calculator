@@ -150,7 +150,7 @@ export const calculatorButtons = [
         value: 'memoryAdd',
     },
     {
-        type: 'enter',
+        type: 'equal',
         className: 'equal',
         text: '=',
         value: 'equal',

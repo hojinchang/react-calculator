@@ -11,6 +11,7 @@ import {
     onClearClick,
     onNumberClick,
     onOperatorClick,
+    onEqualsClick,
 } from '../utils/calculatorFunctions';
 
 function Calculator() {
@@ -38,7 +39,10 @@ function Calculator() {
                 break;
             case "operator":
                 onOperatorClick(btnValue, operator, displayNum, setOperator, setFirstOperand, setDisplayNum);
-                break;  
+                break;
+            case "equal":
+                onEqualsClick(operator, displayNum, firstOperand, secondOperand, setDisplayNum, setFirstOperand, setSecondOperand);
+                break;
         }
 
     }
