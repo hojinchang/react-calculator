@@ -19,6 +19,7 @@ function Calculator() {
     const [secondOperand, setSecondOperand] = useState(null);
     const [displayNum, setDisplayNum] = useState("0");
     const [operator, setOperator] = useState(null);
+    const [performedCalculation, setPerformedCalculation] = useState(false);
 
     const maxDigits = 13;   // Max number of digits on calculator display
 
@@ -32,16 +33,46 @@ function Calculator() {
                 onAllClearClick(setDisplayNum, setFirstOperand, setSecondOperand, setOperator);
                 break;
             case "clear":
-                onClearClick(setDisplayNum);
-                break;
+                onClearClick(operator, setDisplayNum, setFirstOperand, setSecondOperand, setOperator);
+                break; 
             case "number":
-                onNumberClick(maxDigits, btnValue, displayNum, setDisplayNum);
+                onNumberClick(
+                    maxDigits, 
+                    btnValue, 
+                    displayNum, 
+                    performedCalculation,
+                    setDisplayNum,
+                    setFirstOperand,
+                    setSecondOperand,
+                    setOperator,
+                    setPerformedCalculation
+                );
                 break;
             case "operator":
-                onOperatorClick(btnValue, operator, displayNum, setOperator, setFirstOperand, setDisplayNum);
+                onOperatorClick(
+                    btnValue, 
+                    displayNum, 
+                    firstOperand,
+                    secondOperand,
+                    performedCalculation,
+                    setOperator, 
+                    setFirstOperand, 
+                    setDisplayNum, 
+                );
                 break;
             case "equal":
-                onEqualsClick(operator, displayNum, firstOperand, secondOperand, setDisplayNum, setFirstOperand, setSecondOperand);
+                onEqualsClick(
+                    operator, 
+                    displayNum, 
+                    firstOperand, 
+                    secondOperand,
+                    performedCalculation,
+                    setDisplayNum, 
+                    setFirstOperand, 
+                    setSecondOperand,
+                    setOperator,
+                    setPerformedCalculation
+                );
                 break;
         }
 
@@ -50,7 +81,7 @@ function Calculator() {
     function renderButtons() {
         return (
             calculatorButtons.map((btnData) => {
-                return (<Button btnData={btnData} onBtnClick={onBtnClick} />)
+                return (<Button key={btnData.className} btnData={btnData} onBtnClick={onBtnClick} />)
             })
         )
     }

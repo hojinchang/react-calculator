@@ -1,7 +1,7 @@
 export const calculatorButtons = [
     {
         type: 'allClear',
-        className: 'clear',
+        className: 'allClear',
         text: 'AC',
         value: 'allClear'
     },
