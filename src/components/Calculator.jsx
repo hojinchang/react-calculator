@@ -11,11 +11,13 @@ import {
     onClearClick,
     onNumberClick,
     onOperatorClick,
+    onEqualsClick,
 } from '../utils/calculatorFunctions';
 
 function Calculator() {
-    const [previousNum, setPreviousNum] = useState("");
-    const [currentNum, setCurrentNum] = useState("0");   // Current value user input into calculator
+    const [firstOperand, setFirstOperand] = useState("0");
+    const [secondOperand, setSecondOperand] = useState(null);
+    const [currentNum, setCurrentNum] = useState("0");
     const [operator, setOperator] = useState(null);
 
     const maxDigits = 13;   // Max number of digits on calculator display
@@ -25,18 +27,18 @@ function Calculator() {
         const btnValue = e.target.value;
         console.log(btnType, btnValue, currentNum)
 
-        switch(btnType) {
+        switch (btnType) {
             case "allClear":
-                onAllClearClick(setCurrentNum, setPreviousNum, setOperator);
+                onAllClearClick(setFirstOperand, setSecondOperand, setOperator);
                 break;
             case "clear":
-                onClearClick(setCurrentNum);
+                onClearClick(firstOperand, setFirstOperand, setSecondOperand);
                 break;
             case "number":
                 onNumberClick(maxDigits, btnValue, currentNum, setCurrentNum);
                 break;
             case "operator":
-                onOperatorClick(btnValue, operator, setOperator, currentNum, setCurrentNum, previousNum, setPreviousNum);
+                onOperatorClick(btnValue, operator, currentNum, setOperator, setFirstOperand, setCurrentNum);
                 break;
         }
 

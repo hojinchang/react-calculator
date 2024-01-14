@@ -1,18 +1,31 @@
-import { set } from "immutable";
+import {
+    add,
+    subtract,
+    multiply,
+    divide,
+    squareRoot,
+    percent,
+    polarity
+} from './operations';
 
 /* 
     Reset the state of the calculator
     Clear the saved numbers and the pending calculations
 */
-function onAllClearClick(setCurrentNum, setPreviousNum, setOperator) {
-    setCurrentNum("0");
-    setPreviousNum("");
+function onAllClearClick(setFirstOperand, setSecondOperand, setOperator) {
+    setFirstOperand("0");
+    setSecondOperand(null);
     setOperator(null);
 }
 
 // Clear the current number
-function onClearClick(setCurrentNum) {
-    setCurrentNum("");
+function onClearClick(firstOperand, setFirstOperand, setSecondOperand) {
+    if (firstOperand) {
+        setSecondOperand(null);
+        setCurrentNum("0");
+    } else {
+        setFirstOperand(null);
+    }
 }
 
 // Add new digit to the current number
@@ -23,34 +36,24 @@ function onNumberClick(maxDigits, newDigit, currentNum, setCurrentNum) {
         ? newNum = currentNum + newDigit
         : newNum = currentNum
     
-    setCurrentNum(currentNum + newDigit)
+    setCurrentNum(currentNum + newDigit);
 }
 
-// Math operations
+// Operator button functionality
 function onOperatorClick(
     selectedOperator,
-    currentOperator, 
-    setOperator, 
-    currentNum, 
+    currentOperator,
+    currentNum,
+    setOperator,
+    setFirstOperand,
     setCurrentNum,
-    previousNum,
-    setPreviousNum
 ) {
 
-    // If the calculator is in "reset" (no operands) state, ignore operation button clicks
-    if (currentNum === "0" && previousNum === "") {
-        return;
-    }
-
-    /* 
-        If there is no operator set, update operator state to selected operator
-        Save the current number in the previous number state to allow user to input new operand
-    */
     if (!currentOperator) {
         setOperator(selectedOperator);
-        setPreviousNum(currentNum);
+        setFirstOperand(currentNum);
         setCurrentNum("0");
-    } else {   // Keep number states but change the operator
+    } else {
         setOperator(selectedOperator);
     }
 }
