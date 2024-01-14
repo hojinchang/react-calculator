@@ -48,9 +48,20 @@ function onClearClick(
 function onNumberClick(
     maxDigits, 
     newDigit, 
-    displayNum, 
+    displayNum,
+    performedCalculation,
     setDisplayNum,
+    setFirstOperand, 
+    setSecondOperand, 
+    setOperator,
+    setPerformedCalculation
 ) {
+
+    // Reset the calculator is a number button is clicked after an operation
+    if (performedCalculation) {
+        resetState(setDisplayNum, setFirstOperand, setSecondOperand, setOperator, setPerformedCalculation);
+        displayNum = "";
+    }
 
     let newNum;
     if (displayNum === "0") displayNum = "";   // Delete placeholder "0"        
@@ -73,25 +84,6 @@ function onOperatorClick(
     setPerformedCalculation
 ) {
 
-    /*
-        Checks whether a previous operation was performed.
-        If so, reset the current displayed number and set the calculation flag to false
-
-        This allows the user to enter in a new number during chains of operations
-    */
-    // if (performedCalculation) {
-    //     setDisplayNum("0");
-    //     setPerformedCalculation(false);
-    // }
-
-    // if (!firstOperand) {
-    //     setOperator(selectedOperator);
-    //     setFirstOperand(displayNum);
-    //     setDisplayNum("0");
-    // } else if (firstOperand && performedCalculation) {   // Update the operator to perform chain of operations
-    //     setOperator(selectedOperator);
-    // }
-
     // If the first operand is not set, set it
     if (!firstOperand) {
         setOperator(selectedOperator);
@@ -110,7 +102,7 @@ function onOperatorClick(
         setOperator(selectedOperator);
     } 
     // Only reset the operator when nothing is input yet 
-    else if (displayNum === "") {
+    else if (displayNum === "0") {
         setOperator(selectedOperator);
     }
 }

@@ -53,7 +53,12 @@ function Calculator() {
                     maxDigits, 
                     btnValue, 
                     displayNum,
+                    performedCalculation,
                     setDisplayNum,
+                    setFirstOperand, 
+                    setSecondOperand, 
+                    setOperator,
+                    setPerformedCalculation
                 );
                 break;
             case "operator":
