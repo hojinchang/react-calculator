@@ -19,14 +19,9 @@ function onAllClearClick(setDisplayNum, setFirstOperand, secondOperand, setOpera
     setOperator(null);
 }
 
-// Clear the current number
-function onClearClick(firstOperand, setFirstOperand, secondOperand) {
-    if (firstOperand) {
-        setDisplayNum("0");
-        secondOperand(null);
-    } else {
-        setFirstOperand(null);
-    }
+// Clear the current displayed number
+function onClearClick(setDisplayNum) {
+    setDisplayNum("0");
 }
 
 // Add new digit to the current number
@@ -58,6 +53,7 @@ function onOperatorClick(
         setOperator(selectedOperator);
     }
 }
+
 
 function onEqualsClick(
     operator, 

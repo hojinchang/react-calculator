@@ -32,7 +32,7 @@ function Calculator() {
                 onAllClearClick(setDisplayNum, setFirstOperand, setSecondOperand, setOperator);
                 break;
             case "clear":
-                onClearClick(firstOperand, setFirstOperand, setSecondOperand);
+                onClearClick(setDisplayNum);
                 break;
             case "number":
                 onNumberClick(maxDigits, btnValue, displayNum, setDisplayNum);
