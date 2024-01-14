@@ -14,8 +14,8 @@ import {
 } from '../utils/calculatorFunctions';
 
 function Calculator() {
-    const [currentNum, setCurrentNum] = useState("0");   // Current value user input into calculator
     const [previousNum, setPreviousNum] = useState("");
+    const [currentNum, setCurrentNum] = useState("0");   // Current value user input into calculator
     const [operator, setOperator] = useState(null);
 
     const maxDigits = 13;   // Max number of digits on calculator display
@@ -33,10 +33,10 @@ function Calculator() {
                 onClearClick(setCurrentNum);
                 break;
             case "number":
-                onNumberClick(maxDigits, btnValue, setCurrentNum, currentNum);
+                onNumberClick(maxDigits, btnValue, currentNum, setCurrentNum);
                 break;
             case "operator":
-                onOperatorClick(btnValue, setOperator, currentNum, setPreviousNum, setCurrentNum);
+                onOperatorClick(btnValue, operator, setOperator, currentNum, setCurrentNum, previousNum, setPreviousNum);
                 break;
         }
 

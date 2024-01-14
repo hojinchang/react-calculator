@@ -16,7 +16,7 @@ function onClearClick(setCurrentNum) {
 }
 
 // Add new digit to the current number
-function onNumberClick(maxDigits, newDigit, setCurrentNum, currentNum) {
+function onNumberClick(maxDigits, newDigit, currentNum, setCurrentNum) {
     let newNum;
     if (currentNum === "0") currentNum = "";   // Delete placeholder "0"        
     (currentNum.length < maxDigits)   // Limit number to max digits
@@ -27,10 +27,32 @@ function onNumberClick(maxDigits, newDigit, setCurrentNum, currentNum) {
 }
 
 // Math operations
-function onOperatorClick(operator, setOperator, currentNum, setPreviousNum, setCurrentNum) {
-    setOperator(operator);
-    setPreviousNum(currentNum);
-    setCurrentNum("0");
+function onOperatorClick(
+    selectedOperator,
+    currentOperator, 
+    setOperator, 
+    currentNum, 
+    setCurrentNum,
+    previousNum,
+    setPreviousNum
+) {
+
+    // If the calculator is in "reset" (no operands) state, ignore operation button clicks
+    if (currentNum === "0" && previousNum === "") {
+        return;
+    }
+
+    /* 
+        If there is no operator set, update operator state to selected operator
+        Save the current number in the previous number state to allow user to input new operand
+    */
+    if (!currentOperator) {
+        setOperator(selectedOperator);
+        setPreviousNum(currentNum);
+        setCurrentNum("0");
+    } else {   // Keep number states but change the operator
+        setOperator(selectedOperator);
+    }
 }
 
 export {
