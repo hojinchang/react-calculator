@@ -10,6 +10,21 @@ import {
 } from './operations';
 
 /* 
+    Helper Functions
+*/
+
+const MAX_DIGITS = 15;   // Max number of digits on calculator display
+function truncateResult(result) {
+    result = String(result);
+    if (result.length >= MAX_DIGITS) {
+        result = result.slice(0, MAX_DIGITS);
+    }
+
+    return result;
+}
+
+
+/* 
     Reset the state of the calculator
     Clear the saved numbers and the pending calculations
 */
@@ -65,7 +80,6 @@ function onClearClick(
     reset the operation so we can start a new operation with the newly inputted number.
 */
 function onNumberClick(
-    maxDigits, 
     newDigit, 
     output,
     performedOperation,
@@ -103,7 +117,7 @@ function onNumberClick(
     
         let newNum;
         if (output === "0") output = "";   // Delete placeholder "0"        
-        (output.length < maxDigits)   // Limit number to max digits
+        (output.length < MAX_DIGITS)   // Limit number to max digits
             ? newNum = output + newDigit
             : newNum = output
         setOutput(newNum);
@@ -222,8 +236,10 @@ function onEqualsClick(
                 break;
         }
 
-        setFirstOperand(String(result));
-        setOutput(String(result));
+        result = truncateResult(result);
+
+        setFirstOperand(result);
+        setOutput(result);
         setPerformedOperation(true);
         setLastActionMemoryRecalled(false);
     }
@@ -298,22 +314,21 @@ function onInplaceOperatorClick(
     let result
     switch (btnValue) {
         case "polarity":
-            result = String(polarity(outputNum));
-            setOutput(result);
+            result = polarity(outputNum);
             break;
         case "decimal":
             result = decimal(outputNum);
-            setOutput(result);
             break;
         case "percent":
-            result = String(percent(outputNum));
-            setOutput(result);
+            result = percent(outputNum);
             break;
         case "squareRoot":
-            result = String(squareRoot(outputNum));
-            setOutput(result);
+            result = squareRoot(outputNum);
             break;
     }
+
+    result = truncateResult(result);
+    setOutput(result);
 
     if (performedOperation) {
         setFirstOperand(result);

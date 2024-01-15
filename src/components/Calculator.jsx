@@ -17,8 +17,6 @@ import {
 } from '../utils/calculatorFunctions';
 
 function Calculator() {
-    const maxDigits = 13;   // Max number of digits on calculator display
-
     // Basic calculator functionality
     const [firstOperand, setFirstOperand] = useState(null);
     const [secondOperand, setSecondOperand] = useState(null);
@@ -60,7 +58,6 @@ function Calculator() {
                 break; 
             case "number":
                 onNumberClick(
-                    maxDigits, 
                     btnValue, 
                     output,
                     performedOperation,
