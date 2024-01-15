@@ -13,96 +13,103 @@ import {
     Clear the saved numbers and the pending calculations
 */
 function resetState(
-    setDisplayNum, 
+    setOutput, 
     setFirstOperand, 
     setSecondOperand, 
     setOperator,
-    setPerformedCalculation
+    setPerformedOperation
 ) {
-    setDisplayNum("0");
+    setOutput("0");
     setFirstOperand(null);
     setSecondOperand(null);
     setOperator(null);
-    setPerformedCalculation(false);
+    setPerformedOperation(false);
 }
 
 // Clear the current displayed number
 function onClearClick(
-    performedCalculation, 
-    setDisplayNum, 
+    performedOperation, 
+    setOutput, 
     setFirstOperand, 
     setSecondOperand, 
     setOperator,
-    setPerformedCalculation
+    setPerformedOperation
 ) {
     // If an operation has just been perform, reset the calculator state
-    if (performedCalculation) {
-        resetState(setDisplayNum, setFirstOperand, setSecondOperand, setOperator, setPerformedCalculation);
-        setPerformedCalculation(false);
+    if (performedOperation) {
+        resetState(setOutput, setFirstOperand, setSecondOperand, setOperator, setPerformedOperation);
+        setPerformedOperation(false);
     }
 
-    setDisplayNum("0");
+    setOutput("0");
 }
 
 // Add new digit to the current number
 function onNumberClick(
     maxDigits, 
     newDigit, 
-    displayNum,
-    performedCalculation,
-    setDisplayNum,
+    output,
+    performedOperation,
+    setOutput,
     setFirstOperand, 
     setSecondOperand, 
     setOperator,
-    setPerformedCalculation
+    setPerformedOperation
 ) {
 
     // Reset the calculator is a number button is clicked after an operation
-    if (performedCalculation) {
-        resetState(setDisplayNum, setFirstOperand, setSecondOperand, setOperator, setPerformedCalculation);
-        displayNum = "";
+    if (performedOperation) {
+        // resetState(setOutput, setFirstOperand, setSecondOperand, setOperator, setPerformedOperation);
+        setOperator(null);
+        output = "";
     }
 
     let newNum;
-    if (displayNum === "0") displayNum = "";   // Delete placeholder "0"        
-    (displayNum.length < maxDigits)   // Limit number to max digits
-        ? newNum = displayNum + newDigit
-        : newNum = displayNum
+    if (output === "0") output = "";   // Delete placeholder "0"        
+    (output.length < maxDigits)   // Limit number to max digits
+        ? newNum = output + newDigit
+        : newNum = output
     
-    setDisplayNum(newNum);
+    setOutput(newNum);
 }
 
-// Operator button functionality
+/* 
+    When the operator button is clicked, it takes the current output number on the calculator
+    as the first operand.
+*/
 function onOperatorClick(
     selectedOperator,
-    displayNum,
+    operator,
+    output,
     firstOperand,
-    performedCalculation,
-    setDisplayNum,
+    performedOperation,
+    setOutput,
     setFirstOperand,
     setOperator,
-    setPerformedCalculation
+    setPerformedOperation
 ) {
 
-    // If the first operand is not set, set it
-    if (!firstOperand) {
-        setOperator(selectedOperator);
-        setFirstOperand(displayNum);
-        setDisplayNum("0");
-    } 
-    /*
-        Checks whether a previous operation was performed.
-        If so, reset the current displayed number and set the calculation flag to false
 
-        This allows the user to enter in a new number during chains of operations
+    if (!operator) {
+        setOperator(selectedOperator);
+        setFirstOperand(output);
+        setOutput("0");
+    }
+
+    /*
+        This if case allows the user to chain operations one after another
     */
-    else if (performedCalculation) {
-        setDisplayNum("0");
-        setPerformedCalculation(false);   // Set the performedCalculation state to false to allow user to perform another operation
+    if (performedOperation) {
+        setOutput("0");
+        setPerformedOperation(false);   // Set the performedOperation state to false to allow user to perform another operation
         setOperator(selectedOperator);
     } 
+    /* 
+        This case only allows the user to change the operator when nothing is input into the calculator
+        ie. It doesnt allow the user to change the operator once their second operand is inputted
+    */
     // Only reset the operator when nothing is input yet 
-    else if (displayNum === "0") {
+    else if (output === "0") {
         setOperator(selectedOperator);
     }
 }
@@ -110,14 +117,14 @@ function onOperatorClick(
 
 function onEqualsClick(
     operator, 
-    displayNum, 
+    output, 
     firstOperand,
     secondOperand,
-    performedCalculation,
-    setDisplayNum,
+    performedOperation,
+    setOutput,
     setFirstOperand,
     setSecondOperand,
-    setPerformedCalculation,
+    setPerformedOperation,
 ) {
 
     // If the first operand is not set, dont perform any calculation 
@@ -133,32 +140,86 @@ function onEqualsClick(
         The second case allows the second operand to be set to the current displayed number
         if a chain of operations is being performed.
     */
-    if (!secondOperand || (secondOperand && !performedCalculation)) {
-        secondOperand = displayNum;
+    if (!secondOperand || (secondOperand && !performedOperation)) {
+        secondOperand = output;
         setSecondOperand(secondOperand);
     }
 
-    let result;   // Hold the calculation result
     // Operations
-    switch (operator) {
-        case "add":
-            result = add(firstOperand, secondOperand);
-            break;
-        case "subtract":
-            result = subtract(firstOperand, secondOperand);
-            break;
-        case "multiply":
-            result = multiply(firstOperand, secondOperand);
-            break;
-        case "divide":
-            result = divide(firstOperand, secondOperand);
-            break;
+    if (operator) {
+        let result;   // Hold the calculation output
+        switch (operator) {
+            case "add":
+                result = add(firstOperand, secondOperand);
+                break;
+            case "subtract":
+                result = subtract(firstOperand, secondOperand);
+                break;
+            case "multiply":
+                result = multiply(firstOperand, secondOperand);
+                break;
+            case "divide":
+                result = divide(firstOperand, secondOperand);
+                break;
+        }
+
+        setFirstOperand(String(result));
+        setOutput(String(result));
+        setPerformedOperation(true);
     }
 
-    setFirstOperand(String(result));
-    setDisplayNum(String(result));
-    setPerformedCalculation(true);
 }
+
+function onMemoryClick(
+    btnValue, 
+    memory, 
+    output, 
+    setOutput, 
+    setFirstOperand, 
+    setSecondOperand,
+    setOperator, 
+    setPerformedOperation,
+    setMemory
+) {
+    switch (btnValue) {
+        case "memorySave":
+            setMemory(output);
+            setOutput("0");
+            break;
+        case "memoryRecall":
+            setOutput(memory);
+            setOperator(null);   // Reset operation
+            break;
+        case "memoryClear":
+            setMemory("0");
+            break;
+        case "memoryAdd":
+            if (memory !== "0") {
+                const firstOperand = memory;
+                const secondOperand = output;
+                const result = String(add(firstOperand, secondOperand));
+    
+                setOutput(result);
+                setFirstOperand(firstOperand);
+                setSecondOperand(secondOperand);
+                setPerformedOperation(true);
+            }
+            break;
+        case "memorySubtract":
+            if (memory !== "0") {
+                const firstOperand = memory;
+                const secondOperand = output;
+                const result = String(subtract(firstOperand, secondOperand));
+    
+                setOutput(result);
+                setFirstOperand(firstOperand);
+                setSecondOperand(secondOperand);
+                setPerformedOperation(true);
+            }
+            break;
+    }
+}
+
 
 
 export {
@@ -167,4 +228,5 @@ export {
     onNumberClick,
     onOperatorClick,
     onEqualsClick,
+    onMemoryClick,
 }

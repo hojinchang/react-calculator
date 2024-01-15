@@ -12,78 +12,98 @@ import {
     onNumberClick,
     onOperatorClick,
     onEqualsClick,
+    onMemoryClick,
 } from '../utils/calculatorFunctions';
 
 function Calculator() {
+    const maxDigits = 13;   // Max number of digits on calculator display
+
+    // Basic calculator functionality
     const [firstOperand, setFirstOperand] = useState(null);
     const [secondOperand, setSecondOperand] = useState(null);
-    const [displayNum, setDisplayNum] = useState("0");
+    const [output, setOutput] = useState("0");
     const [operator, setOperator] = useState(null);
-    const [performedCalculation, setPerformedCalculation] = useState(false);
+    const [performedOperation, setPerformedOperation] = useState(false);
 
-    const maxDigits = 13;   // Max number of digits on calculator display
+    // Memory
+    const [memory, setMemory] = useState("0");
+
 
     function onBtnClick(e) {
         const btnType = e.target.dataset.action;
         const btnValue = e.target.value;
-        // console.log(btnType, btnValue, displayNum)
+        // console.log(btnType, btnValue, output)
 
         switch (btnType) {
             case "allClear":
                 resetState(
-                    setDisplayNum, 
+                    setOutput, 
                     setFirstOperand, 
                     setSecondOperand, 
                     setOperator,
-                    setPerformedCalculation
+                    setPerformedOperation
                 );
                 break;
             case "clear":
                 onClearClick(
-                    performedCalculation, 
-                    setDisplayNum, 
+                    performedOperation, 
+                    setOutput, 
                     setFirstOperand, 
                     setSecondOperand, 
                     setOperator,
-                    setPerformedCalculation
+                    setPerformedOperation
                 );
                 break; 
             case "number":
                 onNumberClick(
                     maxDigits, 
                     btnValue, 
-                    displayNum,
-                    performedCalculation,
-                    setDisplayNum,
+                    output,
+                    performedOperation,
+                    setOutput,
                     setFirstOperand, 
                     setSecondOperand, 
                     setOperator,
-                    setPerformedCalculation
+                    setPerformedOperation
                 );
                 break;
             case "operator":
                 onOperatorClick(
-                    btnValue, 
-                    displayNum, 
+                    btnValue,
+                    operator,
+                    output, 
                     firstOperand,
-                    performedCalculation,
-                    setDisplayNum,
+                    performedOperation,
+                    setOutput,
                     setFirstOperand,
                     setOperator,
-                    setPerformedCalculation   
+                    setPerformedOperation   
                 );
                 break;
             case "equal":
                 onEqualsClick(
                     operator, 
-                    displayNum, 
+                    output, 
                     firstOperand, 
                     secondOperand,
-                    performedCalculation,
-                    setDisplayNum, 
+                    performedOperation,
+                    setOutput, 
                     setFirstOperand, 
                     setSecondOperand,
-                    setPerformedCalculation
+                    setPerformedOperation
+                );
+                break;
+            case "memory":
+                onMemoryClick(
+                    btnValue, 
+                    memory, 
+                    output, 
+                    setOutput, 
+                    setFirstOperand, 
+                    setSecondOperand,
+                    setOperator,
+                    setPerformedOperation,
+                    setMemory
                 );
                 break;
         }
@@ -101,7 +121,7 @@ function Calculator() {
     return (
         <div className="calculator">
             <div className="display">
-                {displayNum}
+                {output}
             </div>
             <div className="buttons">
                 {renderButtons()}
