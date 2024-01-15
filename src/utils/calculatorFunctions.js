@@ -13,6 +13,8 @@ import {
     Helper Functions
 */
 const MAX_DIGITS = 15;   // Max number of digits on calculator display
+
+// Truncate result to not exceed the max digits
 function truncateResult(result) {
     result = String(result);
     if (result.length >= MAX_DIGITS) {
@@ -92,11 +94,13 @@ function onClearClick(
 function onNumberClick(
     newDigit, 
     output,
+    lastActionOperatorSelect,
     performedOperation,
     lastActionMemorySaved,
     lastActionMemoryRecalled,
     setOutput,
     setOperator,
+    setLastActionOperatorSelect,
     setPerformedOperation,
     setLastActionMemorySaved,
     setLastActionMemoryRecalled
@@ -104,9 +108,11 @@ function onNumberClick(
 
     if (isNaN(output)) output = "";   // Reset output if output is NaN
 
+    if (lastActionOperatorSelect) setLastActionOperatorSelect(false);
+
     /* 
         If the last action was to save a number into memory or recall it,
-        clicking a number button overwrite the calculate output
+        clicking a number button overwrite the calculator's output
     */
     if (lastActionMemorySaved || lastActionMemoryRecalled) {
         setOutput(newDigit);
@@ -153,6 +159,7 @@ function onOperatorClick(
     setOutput,
     setFirstOperand,
     setOperator,
+    setLastActionOperatorSelect,
     setPerformedOperation,
     setLastActionMemorySaved,
     setLastActionMemoryRecalled
@@ -186,6 +193,8 @@ function onOperatorClick(
         setOperator(selectedOperator);
     }
 
+
+    setLastActionOperatorSelect(true);
     resetMemoryStates(
         lastActionMemorySaved, 
         lastActionMemoryRecalled,
@@ -200,11 +209,13 @@ function onEqualsClick(
     output, 
     firstOperand,
     secondOperand,
+    lastActionOperatorSelect,
     performedOperation,
     lastActionMemoryRecalled,
     setOutput,
     setFirstOperand,
     setSecondOperand,
+    setLastActionOperatorSelect,
     setPerformedOperation,
     setLastActionMemoryRecalled,
 ) {
@@ -228,7 +239,12 @@ function onEqualsClick(
                 4. The result of the operation should be 5*3 = 30 (based on windows calculator app) 
     */
     if (lastActionMemoryRecalled) {
-        firstOperand = output;
+        if (lastActionOperatorSelect) {
+            secondOperand = output;
+        } else {
+            firstOperand = output;
+        }
+        setLastActionOperatorSelect(false);
     }
 
     /*
@@ -269,6 +285,7 @@ function onEqualsClick(
 
         setOutput(result);
         setFirstOperand(result);
+        setLastActionOperatorSelect(false);
         setPerformedOperation(true);
         setLastActionMemoryRecalled(false);
     }
@@ -330,15 +347,19 @@ function onMemoryClick(
 function onInplaceOperatorClick(
     btnValue,
     outputNum,
+    lastActionOperatorSelect,
     performedOperation,
     lastActionMemorySaved,
     lastActionMemoryRecalled,
     setOutput,
     setFirstOperand,
+    setLastActionOperatorSelect,
     setPerformedOperation,
     setLastActionMemorySaved,
     setLastActionMemoryRecalled
 ) {
+
+    if (lastActionOperatorSelect) setLastActionOperatorSelect(false);
 
     let result
     switch (btnValue) {

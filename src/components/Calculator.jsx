@@ -22,6 +22,7 @@ function Calculator() {
     const [secondOperand, setSecondOperand] = useState(null);
     const [output, setOutput] = useState("0");
     const [operator, setOperator] = useState(null);
+    const [lastActionOperatorSelect, setLastActionOperatorSelect] = useState(false);
     const [performedOperation, setPerformedOperation] = useState(false);
 
     // Memory
@@ -61,11 +62,13 @@ function Calculator() {
                 onNumberClick(
                     btnValue, 
                     output,
+                    lastActionOperatorSelect,
                     performedOperation,
                     lastActionMemorySaved,
                     lastActionMemoryRecalled,
                     setOutput, 
                     setOperator,
+                    setLastActionOperatorSelect,
                     setPerformedOperation,
                     setLastActionMemorySaved,
                     setLastActionMemoryRecalled,
@@ -82,6 +85,7 @@ function Calculator() {
                     setOutput,
                     setFirstOperand,
                     setOperator,
+                    setLastActionOperatorSelect,
                     setPerformedOperation,
                     setLastActionMemorySaved,
                     setLastActionMemoryRecalled,
@@ -93,11 +97,13 @@ function Calculator() {
                     output, 
                     firstOperand, 
                     secondOperand,
+                    lastActionOperatorSelect,
                     performedOperation,
                     lastActionMemoryRecalled,
                     setOutput, 
                     setFirstOperand, 
                     setSecondOperand,
+                    setLastActionOperatorSelect,
                     setPerformedOperation,
                     setLastActionMemoryRecalled
                 );
@@ -120,11 +126,13 @@ function Calculator() {
                 onInplaceOperatorClick(
                     btnValue,
                     output,
+                    lastActionOperatorSelect,
                     performedOperation,
                     lastActionMemorySaved,
                     lastActionMemoryRecalled,
                     setOutput,
                     setFirstOperand,
+                    setLastActionOperatorSelect,
                     setPerformedOperation,
                     setLastActionMemorySaved,
                     setLastActionMemoryRecalled
