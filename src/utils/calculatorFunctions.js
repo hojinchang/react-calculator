@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import {
     add,
     subtract,
@@ -17,13 +18,15 @@ function resetState(
     setFirstOperand, 
     setSecondOperand, 
     setOperator,
-    setPerformedOperation
+    setPerformedOperation,
+    setLastActionMemorySaved
 ) {
     setOutput("0");
     setFirstOperand(null);
     setSecondOperand(null);
     setOperator(null);
     setPerformedOperation(false);
+    setLastActionMemorySaved(false);
 }
 
 // Clear the current displayed number
@@ -33,55 +36,74 @@ function onClearClick(
     setFirstOperand, 
     setSecondOperand, 
     setOperator,
-    setPerformedOperation
+    setPerformedOperation,
+    setLastActionMemorySaved
 ) {
     // If an operation has just been perform, reset the calculator state
     if (performedOperation) {
-        resetState(setOutput, setFirstOperand, setSecondOperand, setOperator, setPerformedOperation);
+        resetState(setOutput, setFirstOperand, setSecondOperand, setOperator, setPerformedOperation, setLastActionMemorySaved);
         setPerformedOperation(false);
     }
 
     setOutput("0");
 }
 
-// Add new digit to the current number
+/*
+    Add new digit to the current number.
+    If a number button is clicked immediately after performing an operation,
+    reset the operation so we can start a new operation with the newly inputted number.
+*/
 function onNumberClick(
     maxDigits, 
     newDigit, 
     output,
     performedOperation,
+    lastActionMemorySaved,
+    lastActionMemoryRecalled,
     setOutput,
-    setFirstOperand, 
-    setSecondOperand, 
     setOperator,
-    setPerformedOperation
+    setLastActionMemorySaved,
+    setLastActionMemoryRecalled
 ) {
 
-    // Reset the calculator is a number button is clicked after an operation
-    if (performedOperation) {
-        // resetState(setOutput, setFirstOperand, setSecondOperand, setOperator, setPerformedOperation);
-        setOperator(null);
-        output = "";
-    }
-
-    let newNum;
-    if (output === "0") output = "";   // Delete placeholder "0"        
-    (output.length < maxDigits)   // Limit number to max digits
-        ? newNum = output + newDigit
-        : newNum = output
+    // If the last action was to save a number into memory, clicking a number button will set the calculator output to be that digit
+    if (lastActionMemorySaved) {
+        setOutput(newDigit);
+        setLastActionMemorySaved(false);
+    } 
+    // If the last action was to recall a number, clicking a number button will set the calculator output to be that digit
+    else if (lastActionMemoryRecalled) {
+        setOutput(newDigit);
+        setLastActionMemoryRecalled(false);
+    } 
+    // Else, perform normal operation
+    else {
+        // Reset operation
+        if (performedOperation) {
+            // resetState(setOutput, setFirstOperand, setSecondOperand, setOperator, setPerformedOperation);
+            setOperator(null);
+            output = "";
+        }
     
-    setOutput(newNum);
+        let newNum;
+        if (output === "0") output = "";   // Delete placeholder "0"        
+        (output.length < maxDigits)   // Limit number to max digits
+            ? newNum = output + newDigit
+            : newNum = output
+        setOutput(newNum);
+    }
 }
 
 /* 
     When the operator button is clicked, it takes the current output number on the calculator
     as the first operand.
+
+    It prepares the calculator output to accept the second operand by setting it to 0.
 */
 function onOperatorClick(
     selectedOperator,
-    operator,
+    currentOperator,
     output,
-    firstOperand,
     performedOperation,
     setOutput,
     setFirstOperand,
@@ -89,8 +111,8 @@ function onOperatorClick(
     setPerformedOperation
 ) {
 
-
-    if (!operator) {
+    // If this is a new operation
+    if (!currentOperator) {
         setOperator(selectedOperator);
         setFirstOperand(output);
         setOutput("0");
@@ -105,16 +127,15 @@ function onOperatorClick(
         setOperator(selectedOperator);
     } 
     /* 
-        This case only allows the user to change the operator when nothing is input into the calculator
-        ie. It doesnt allow the user to change the operator once their second operand is inputted
+        This case only allows the user to change the operator when no number is inputted into the calculator
+        ie. It doesnt allow the user to change the operator once their second operand is being inputted
     */
-    // Only reset the operator when nothing is input yet 
     else if (output === "0") {
         setOperator(selectedOperator);
     }
 }
 
-
+// Perform operation
 function onEqualsClick(
     operator, 
     output, 
@@ -127,17 +148,23 @@ function onEqualsClick(
     setPerformedOperation,
 ) {
 
-    // If the first operand is not set, dont perform any calculation 
+    // If the first operand is not set, dont perform any calculation
+
+    /*
+        If the first operand is not set, dont perform any operation
+        (basically disable the equal button if an operator hasent been pressed yet).
+    */
     if (!firstOperand) {
         return;
     }
 
     /*
-        If the second operand is not set, 
-        OR if the second operand is set or a previous calculation wasnt performed,
+        1. If the second operand is not set, 
+        OR 
+        2. if the second operand is set and a previous operation wasnt performed,
         set the second operand to be the current displayed number
 
-        The second case allows the second operand to be set to the current displayed number
+        Case 2 allows the second operand to be set to the current displayed number
         if a chain of operations is being performed.
     */
     if (!secondOperand || (secondOperand && !performedOperation)) {
@@ -167,54 +194,52 @@ function onEqualsClick(
         setOutput(String(result));
         setPerformedOperation(true);
     }
-
 }
 
+// Handle memory button logic
 function onMemoryClick(
     btnValue, 
     memory, 
-    output, 
-    setOutput, 
-    setFirstOperand, 
-    setSecondOperand,
-    setOperator, 
-    setPerformedOperation,
-    setMemory
+    output,
+    operator, 
+    setOutput,
+    setMemory,
+    setFirstOperand,
+    setMemorySaved,
+    setLastActionMemoryRecalled
 ) {
+
+    let result;
     switch (btnValue) {
         case "memorySave":
             setMemory(output);
-            setOutput("0");
+            setMemorySaved(true);
             break;
         case "memoryRecall":
-            setOutput(memory);
-            setOperator(null);   // Reset operation
+            if (memory) {
+                if (operator) {
+                    setOutput(memory);   // If operation is in progress, set the memory to be the calculator ouput
+                } else {
+                    setFirstOperand(memory);   // If no operation in progress, set it as first operand
+                    setOutput(memory);
+                }
+
+                setLastActionMemoryRecalled(true);
+            }
             break;
         case "memoryClear":
-            setMemory("0");
+            if (memory) setMemory(null);
             break;
         case "memoryAdd":
-            if (memory !== "0") {
-                const firstOperand = memory;
-                const secondOperand = output;
-                const result = String(add(firstOperand, secondOperand));
-    
-                setOutput(result);
-                setFirstOperand(firstOperand);
-                setSecondOperand(secondOperand);
-                setPerformedOperation(true);
+            if (memory) {
+                result = String(add(memory, output));
+                setMemory(result);
             }
             break;
         case "memorySubtract":
-            if (memory !== "0") {
-                const firstOperand = memory;
-                const secondOperand = output;
-                const result = String(subtract(firstOperand, secondOperand));
-    
-                setOutput(result);
-                setFirstOperand(firstOperand);
-                setSecondOperand(secondOperand);
-                setPerformedOperation(true);
+            if (memory) {
+                result = String(subtract(memory, output));
+                setMemory(result);
             }
             break;
     }

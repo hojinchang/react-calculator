@@ -26,8 +26,9 @@ function Calculator() {
     const [performedOperation, setPerformedOperation] = useState(false);
 
     // Memory
-    const [memory, setMemory] = useState("0");
-
+    const [memory, setMemory] = useState(null);
+    const [lastActionMemorySaved, setLastActionMemorySaved] = useState(false);
+    const [lastActionMemoryRecalled, setLastActionMemoryRecalled] = useState(false);
 
     function onBtnClick(e) {
         const btnType = e.target.dataset.action;
@@ -41,7 +42,8 @@ function Calculator() {
                     setFirstOperand, 
                     setSecondOperand, 
                     setOperator,
-                    setPerformedOperation
+                    setPerformedOperation,
+                    setLastActionMemorySaved
                 );
                 break;
             case "clear":
@@ -51,7 +53,8 @@ function Calculator() {
                     setFirstOperand, 
                     setSecondOperand, 
                     setOperator,
-                    setPerformedOperation
+                    setPerformedOperation,
+                    setLastActionMemorySaved
                 );
                 break; 
             case "number":
@@ -60,11 +63,12 @@ function Calculator() {
                     btnValue, 
                     output,
                     performedOperation,
-                    setOutput,
-                    setFirstOperand, 
-                    setSecondOperand, 
+                    lastActionMemorySaved,
+                    lastActionMemoryRecalled,
+                    setOutput, 
                     setOperator,
-                    setPerformedOperation
+                    setLastActionMemorySaved,
+                    setLastActionMemoryRecalled,
                 );
                 break;
             case "operator":
@@ -72,7 +76,6 @@ function Calculator() {
                     btnValue,
                     operator,
                     output, 
-                    firstOperand,
                     performedOperation,
                     setOutput,
                     setFirstOperand,
@@ -97,13 +100,13 @@ function Calculator() {
                 onMemoryClick(
                     btnValue, 
                     memory, 
-                    output, 
-                    setOutput, 
-                    setFirstOperand, 
-                    setSecondOperand,
-                    setOperator,
-                    setPerformedOperation,
-                    setMemory
+                    output,
+                    operator,
+                    setOutput,
+                    setMemory,
+                    setFirstOperand,
+                    setLastActionMemorySaved,
+                    setLastActionMemoryRecalled
                 );
                 break;
         }
