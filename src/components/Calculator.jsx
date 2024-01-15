@@ -67,6 +67,7 @@ function Calculator() {
                     lastActionMemoryRecalled,
                     setOutput, 
                     setOperator,
+                    setPerformedOperation,
                     setLastActionMemorySaved,
                     setLastActionMemoryRecalled,
                 );

@@ -62,6 +62,7 @@ function onNumberClick(
     lastActionMemoryRecalled,
     setOutput,
     setOperator,
+    setPerformedOperation,
     setLastActionMemorySaved,
     setLastActionMemoryRecalled
 ) {
@@ -80,8 +81,8 @@ function onNumberClick(
     else {
         // Reset operation
         if (performedOperation) {
-            // resetState(setOutput, setFirstOperand, setSecondOperand, setOperator, setPerformedOperation);
             setOperator(null);
+            setPerformedOperation(false);
             output = "";
         }
     
@@ -97,8 +98,6 @@ function onNumberClick(
 /* 
     When the operator button is clicked, it takes the current output number on the calculator
     as the first operand.
-
-    It prepares the calculator output to accept the second operand by setting it to 0.
 */
 function onOperatorClick(
     selectedOperator,
@@ -148,8 +147,6 @@ function onEqualsClick(
     setPerformedOperation,
 ) {
 
-    // If the first operand is not set, dont perform any calculation
-
     /*
         If the first operand is not set, dont perform any operation
         (basically disable the equal button if an operator hasent been pressed yet).
@@ -164,8 +161,10 @@ function onEqualsClick(
         2. if the second operand is set and a previous operation wasnt performed,
         set the second operand to be the current displayed number
 
-        Case 2 allows the second operand to be set to the current displayed number
-        if a chain of operations is being performed.
+        Case 2 allows the user to continuous press the equal button to perform the same operation as the previous.
+        
+        ex. If the user inputs the operation 1+1. Continously pressing equal will add 1 to 
+        the current output.
     */
     if (!secondOperand || (secondOperand && !performedOperation)) {
         secondOperand = output;
