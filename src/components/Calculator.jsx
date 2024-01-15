@@ -13,7 +13,7 @@ import {
     onOperatorClick,
     onEqualsClick,
     onMemoryClick,
-    onSpecialOperatorClick,
+    onInplaceOperatorClick,
 } from '../utils/calculatorFunctions';
 
 function Calculator() {
@@ -44,6 +44,7 @@ function Calculator() {
                     setOperator,
                     setPerformedOperation,
                     setLastActionMemorySaved,
+                    setLastActionMemoryRecalled
                 );
                 break;
             case "clear":
@@ -78,10 +79,14 @@ function Calculator() {
                     operator,
                     output, 
                     performedOperation,
+                    lastActionMemorySaved,
+                    lastActionMemoryRecalled,
                     setOutput,
                     setFirstOperand,
                     setOperator,
                     setPerformedOperation,
+                    setLastActionMemorySaved,
+                    setLastActionMemoryRecalled,
                 );
                 break;
             case "equal":
@@ -91,10 +96,12 @@ function Calculator() {
                     firstOperand, 
                     secondOperand,
                     performedOperation,
+                    lastActionMemoryRecalled,
                     setOutput, 
                     setFirstOperand, 
                     setSecondOperand,
-                    setPerformedOperation
+                    setPerformedOperation,
+                    setLastActionMemoryRecalled
                 );
                 break;
             case "memory":
@@ -106,15 +113,23 @@ function Calculator() {
                     setOutput,
                     setMemory,
                     setFirstOperand,
+                    setPerformedOperation,
                     setLastActionMemorySaved,
                     setLastActionMemoryRecalled
                 );
                 break;
             case "special-operator":
-                onSpecialOperatorClick(
+                onInplaceOperatorClick(
                     btnValue,
                     output,
+                    performedOperation,
+                    lastActionMemorySaved,
+                    lastActionMemoryRecalled,
                     setOutput,
+                    setFirstOperand,
+                    setPerformedOperation,
+                    setLastActionMemorySaved,
+                    setLastActionMemoryRecalled
                 );
                 break;
         }

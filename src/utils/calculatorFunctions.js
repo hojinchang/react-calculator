@@ -1,10 +1,10 @@
-import { memo } from 'react';
 import {
     add,
     subtract,
     multiply,
     divide,
     squareRoot,
+    decimal,
     percent,
     polarity
 } from './operations';
@@ -20,7 +20,7 @@ function resetState(
     setOperator,
     setPerformedOperation,
     setLastActionMemorySaved,
-    setDecimal
+    setLastActionMemoryRecalled
 ) {
     setOutput("0");
     setFirstOperand(null);
@@ -28,7 +28,7 @@ function resetState(
     setOperator(null);
     setPerformedOperation(false);
     setLastActionMemorySaved(false);
-    setDecimal(false);
+    setLastActionMemoryRecalled(false);
 }
 
 // Clear the current displayed number
@@ -39,11 +39,20 @@ function onClearClick(
     setSecondOperand, 
     setOperator,
     setPerformedOperation,
-    setLastActionMemorySaved
+    setLastActionMemorySaved,
+    setLastActionMemoryRecalled
 ) {
     // If an operation has just been perform, reset the calculator state
     if (performedOperation) {
-        resetState(setOutput, setFirstOperand, setSecondOperand, setOperator, setPerformedOperation, setLastActionMemorySaved, setDecimal);
+        resetState(
+            setOutput, 
+            setFirstOperand, 
+            setSecondOperand, 
+            setOperator, 
+            setPerformedOperation, 
+            setLastActionMemorySaved, 
+            setLastActionMemoryRecalled
+        );
         setPerformedOperation(false);
     }
 
@@ -69,19 +78,23 @@ function onNumberClick(
     setLastActionMemoryRecalled
 ) {
 
-    // If the last action was to save a number into memory, clicking a number button will set the calculator output to be that digit
-    if (lastActionMemorySaved) {
+    if (isNaN(output)) output = "";
+
+    /* 
+        If the last action was to save a number into memory or recall it,
+        clicking a number button overwrite the calculate output
+    */
+    if (lastActionMemorySaved || lastActionMemoryRecalled) {
         setOutput(newDigit);
-        setLastActionMemorySaved(false);
-    } 
-    // If the last action was to recall a number, clicking a number button will set the calculator output to be that digit
-    else if (lastActionMemoryRecalled) {
-        setOutput(newDigit);
-        setLastActionMemoryRecalled(false);
+        setPerformedOperation(false);
+        setOperator(null);
+
+        if (lastActionMemorySaved) setLastActionMemorySaved(false);
+        if (lastActionMemoryRecalled) setLastActionMemoryRecalled(false);
     } 
     // Else, perform normal operation
     else { 
-        // Reset operation
+        // Reset operation if number button is pressed after an operation
         if (performedOperation) {
             setOperator(null);
             setPerformedOperation(false);
@@ -106,17 +119,26 @@ function onOperatorClick(
     currentOperator,
     output,
     performedOperation,
+    lastActionMemorySaved,
+    lastActionMemoryRecalled,
     setOutput,
     setFirstOperand,
     setOperator,
-    setPerformedOperation
+    setPerformedOperation,
+    setLastActionMemorySaved,
+    setLastActionMemoryRecalled
 ) {
 
-    // If this is a new operation
+    // If this is a new operation, set the first operand and prepare for next operand input
     if (!currentOperator) {
         setOperator(selectedOperator);
         setFirstOperand(output);
         setOutput("0");
+    }
+
+    // If the memory has been recalled, set it as the first operand
+    if (lastActionMemoryRecalled) {
+        setFirstOperand(output);
     }
 
     /*
@@ -134,6 +156,9 @@ function onOperatorClick(
     else if (output === "0") {
         setOperator(selectedOperator);
     }
+
+    if (lastActionMemorySaved) setLastActionMemorySaved(false);
+    if (lastActionMemoryRecalled) setLastActionMemoryRecalled(false);
 }
 
 // Perform operation
@@ -143,10 +168,12 @@ function onEqualsClick(
     firstOperand,
     secondOperand,
     performedOperation,
+    lastActionMemoryRecalled,
     setOutput,
     setFirstOperand,
     setSecondOperand,
     setPerformedOperation,
+    setLastActionMemoryRecalled,
 ) {
 
     /*
@@ -168,6 +195,10 @@ function onEqualsClick(
         ex. If the user inputs the operation 1+1. Continously pressing equal will add 1 to 
         the current output.
     */
+    if (lastActionMemoryRecalled) {
+        secondOperand = output;
+    }
+
     if (!secondOperand || (secondOperand && !performedOperation)) {
         secondOperand = output;
         setSecondOperand(secondOperand);
@@ -194,6 +225,7 @@ function onEqualsClick(
         setFirstOperand(String(result));
         setOutput(String(result));
         setPerformedOperation(true);
+        setLastActionMemoryRecalled(false);
     }
 }
 
@@ -206,7 +238,8 @@ function onMemoryClick(
     setOutput,
     setMemory,
     setFirstOperand,
-    setMemorySaved,
+    setPerformedOperation,
+    setLastActionMemorySaved,
     setLastActionMemoryRecalled
 ) {
 
@@ -214,7 +247,7 @@ function onMemoryClick(
     switch (btnValue) {
         case "memorySave":
             setMemory(output);
-            setMemorySaved(true);
+            setLastActionMemorySaved(true);
             break;
         case "memoryRecall":
             if (memory) {
@@ -223,8 +256,10 @@ function onMemoryClick(
                 } else {
                     setFirstOperand(memory);   // If no operation in progress, set it as first operand
                     setOutput(memory);
+                    setPerformedOperation(false);   // Reset the performed operation
                 }
-
+                
+                // setOperator(null);   // Reset the current operator
                 setLastActionMemoryRecalled(true);
             }
             break;
@@ -246,23 +281,48 @@ function onMemoryClick(
     }
 }
 
-function onSpecialOperatorClick(
+// Inplace operators
+function onInplaceOperatorClick(
     btnValue,
     outputNum,
-    setOutput
+    performedOperation,
+    lastActionMemorySaved,
+    lastActionMemoryRecalled,
+    setOutput,
+    setFirstOperand,
+    setPerformedOperation,
+    setLastActionMemorySaved,
+    setLastActionMemoryRecalled
 ) {
 
+    let result
     switch (btnValue) {
         case "polarity":
-            let result = polarity(outputNum);
+            result = String(polarity(outputNum));
             setOutput(result);
             break;
         case "decimal":
-            if (!outputNum.includes(".")) {
-                setOutput(outputNum + ".");
-            }
+            result = decimal(outputNum);
+            setOutput(result);
+            break;
+        case "percent":
+            result = String(percent(outputNum));
+            setOutput(result);
+            break;
+        case "squareRoot":
+            result = String(squareRoot(outputNum));
+            setOutput(result);
             break;
     }
+
+    if (performedOperation) {
+        setFirstOperand(result);
+    } else {
+        setPerformedOperation(false);
+    }
+
+    if (lastActionMemorySaved) setLastActionMemorySaved(false);
+    if (lastActionMemoryRecalled) setLastActionMemoryRecalled(false);
 }
 
 
@@ -274,5 +334,5 @@ export {
     onOperatorClick,
     onEqualsClick,
     onMemoryClick,
-    onSpecialOperatorClick,
+    onInplaceOperatorClick,
 }

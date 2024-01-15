@@ -3,7 +3,7 @@ function add(x, y) {
     return Number(x) + Number(y);
 }
 
-// Subtract second number from first numner
+// Subtract second number from first number
 function subtract(x, y) {
     return Number(x) - Number(y);
 }
@@ -15,16 +15,19 @@ function multiply(x, y) {
 
 // Divide second number from first number
 function divide(x, y) {
-    if (Number(y) === 0) {
-        return "Cannot divide by 0";
-    }
-
     return Number(x) / Number(y);
 }
 
 // Square root the number
 function squareRoot(x) {
     return Math.sqrt(Number(x));
+}
+
+// Add decimal to the number
+function decimal(x) {
+    if (!x.includes(".")) return x + ".";
+
+    return x;
 }
 
 // Convert number into a percentage
@@ -37,4 +40,4 @@ function polarity(x) {
     return Number(x) * -1;
 }
 
-export { add, subtract, multiply, divide, squareRoot, percent, polarity };
+export { add, subtract, multiply, divide, squareRoot, decimal, percent, polarity };
