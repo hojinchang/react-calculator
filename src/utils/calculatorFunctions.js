@@ -12,7 +12,6 @@ import {
 /* 
     Helper Functions
 */
-
 const MAX_DIGITS = 15;   // Max number of digits on calculator display
 function truncateResult(result) {
     result = String(result);
@@ -23,6 +22,16 @@ function truncateResult(result) {
     return result;
 }
 
+function resetMemoryStates(
+    lastActionMemorySaved, 
+    lastActionMemoryRecalled,
+    setLastActionMemorySaved,
+    setLastActionMemoryRecalled
+) {
+
+    if (lastActionMemorySaved) setLastActionMemorySaved(false);
+    if (lastActionMemoryRecalled) setLastActionMemoryRecalled(false);
+}
 
 /* 
     Reset the state of the calculator
@@ -68,6 +77,7 @@ function onClearClick(
             setLastActionMemorySaved, 
             setLastActionMemoryRecalled
         );
+
         setPerformedOperation(false);
     }
 
@@ -92,7 +102,7 @@ function onNumberClick(
     setLastActionMemoryRecalled
 ) {
 
-    if (isNaN(output)) output = "";
+    if (isNaN(output)) output = "";   // Reset output if output is NaN
 
     /* 
         If the last action was to save a number into memory or recall it,
@@ -103,8 +113,12 @@ function onNumberClick(
         setPerformedOperation(false);
         setOperator(null);
 
-        if (lastActionMemorySaved) setLastActionMemorySaved(false);
-        if (lastActionMemoryRecalled) setLastActionMemoryRecalled(false);
+        resetMemoryStates(
+            lastActionMemorySaved, 
+            lastActionMemoryRecalled,
+            setLastActionMemorySaved,
+            setLastActionMemoryRecalled
+        );
     } 
     // Else, perform normal operation
     else { 
@@ -120,6 +134,7 @@ function onNumberClick(
         (output.length < MAX_DIGITS)   // Limit number to max digits
             ? newNum = output + newDigit
             : newNum = output
+
         setOutput(newNum);
     }
 }
@@ -145,9 +160,9 @@ function onOperatorClick(
 
     // If this is a new operation, set the first operand and prepare for next operand input
     if (!currentOperator) {
+        setOutput("0");
         setOperator(selectedOperator);
         setFirstOperand(output);
-        setOutput("0");
     }
 
     // If the memory has been recalled, set it as the first operand
@@ -171,8 +186,12 @@ function onOperatorClick(
         setOperator(selectedOperator);
     }
 
-    if (lastActionMemorySaved) setLastActionMemorySaved(false);
-    if (lastActionMemoryRecalled) setLastActionMemoryRecalled(false);
+    resetMemoryStates(
+        lastActionMemorySaved, 
+        lastActionMemoryRecalled,
+        setLastActionMemorySaved,
+        setLastActionMemoryRecalled
+    );
 }
 
 // Perform operation
@@ -198,6 +217,20 @@ function onEqualsClick(
         return;
     }
 
+
+    /*
+        If the user recalls from memory and clicks equal, set the first operand to be the recalled number
+        It handles this specific use flow:
+            ex. 
+                1. The value of 5 is stored into memory
+                2. The user inputs 2*3, the result is 6.
+                3. The user clicks memory, then clicks equal
+                4. The result of the operation should be 5*3 = 30 (based on windows calculator app) 
+    */
+    if (lastActionMemoryRecalled) {
+        firstOperand = output;
+    }
+
     /*
         1. If the second operand is not set, 
         OR 
@@ -209,10 +242,6 @@ function onEqualsClick(
         ex. If the user inputs the operation 1+1. Continously pressing equal will add 1 to 
         the current output.
     */
-    if (lastActionMemoryRecalled) {
-        secondOperand = output;
-    }
-
     if (!secondOperand || (secondOperand && !performedOperation)) {
         secondOperand = output;
         setSecondOperand(secondOperand);
@@ -238,8 +267,8 @@ function onEqualsClick(
 
         result = truncateResult(result);
 
-        setFirstOperand(result);
         setOutput(result);
+        setFirstOperand(result);
         setPerformedOperation(true);
         setLastActionMemoryRecalled(false);
     }
@@ -330,14 +359,28 @@ function onInplaceOperatorClick(
     result = truncateResult(result);
     setOutput(result);
 
+    /*
+        If the user performs an inplace operation after a regular operation, 
+        set the first operand to be the result of the inplace operation.
+        It handles this specific use flow:
+            ex. 
+                1. The user performs a normal operation like 2*3 = 6
+                2. The user performs an inplace operation
+                3. The user clicks equal
+                4. The result of the operation should be sqrt(6)*3 = 2.449 (based on windows calculator app) 
+    */
     if (performedOperation) {
         setFirstOperand(result);
     } else {
         setPerformedOperation(false);
     }
 
-    if (lastActionMemorySaved) setLastActionMemorySaved(false);
-    if (lastActionMemoryRecalled) setLastActionMemoryRecalled(false);
+    resetMemoryStates(
+        lastActionMemorySaved, 
+        lastActionMemoryRecalled,
+        setLastActionMemorySaved,
+        setLastActionMemoryRecalled
+    );
 }
 
 

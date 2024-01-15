@@ -54,6 +54,7 @@ function Calculator() {
                     setOperator,
                     setPerformedOperation,
                     setLastActionMemorySaved,
+                    setLastActionMemoryRecalled
                 );
                 break; 
             case "number":
