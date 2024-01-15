@@ -19,7 +19,8 @@ function resetState(
     setSecondOperand, 
     setOperator,
     setPerformedOperation,
-    setLastActionMemorySaved
+    setLastActionMemorySaved,
+    setDecimal
 ) {
     setOutput("0");
     setFirstOperand(null);
@@ -27,6 +28,7 @@ function resetState(
     setOperator(null);
     setPerformedOperation(false);
     setLastActionMemorySaved(false);
+    setDecimal(false);
 }
 
 // Clear the current displayed number
@@ -41,7 +43,7 @@ function onClearClick(
 ) {
     // If an operation has just been perform, reset the calculator state
     if (performedOperation) {
-        resetState(setOutput, setFirstOperand, setSecondOperand, setOperator, setPerformedOperation, setLastActionMemorySaved);
+        resetState(setOutput, setFirstOperand, setSecondOperand, setOperator, setPerformedOperation, setLastActionMemorySaved, setDecimal);
         setPerformedOperation(false);
     }
 
@@ -78,7 +80,7 @@ function onNumberClick(
         setLastActionMemoryRecalled(false);
     } 
     // Else, perform normal operation
-    else {
+    else { 
         // Reset operation
         if (performedOperation) {
             setOperator(null);
@@ -244,6 +246,25 @@ function onMemoryClick(
     }
 }
 
+function onSpecialOperatorClick(
+    btnValue,
+    outputNum,
+    setOutput
+) {
+
+    switch (btnValue) {
+        case "polarity":
+            let result = polarity(outputNum);
+            setOutput(result);
+            break;
+        case "decimal":
+            if (!outputNum.includes(".")) {
+                setOutput(outputNum + ".");
+            }
+            break;
+    }
+}
+
 
 
 export {
@@ -253,4 +274,5 @@ export {
     onOperatorClick,
     onEqualsClick,
     onMemoryClick,
+    onSpecialOperatorClick,
 }

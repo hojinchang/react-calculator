@@ -13,6 +13,7 @@ import {
     onOperatorClick,
     onEqualsClick,
     onMemoryClick,
+    onSpecialOperatorClick,
 } from '../utils/calculatorFunctions';
 
 function Calculator() {
@@ -33,7 +34,6 @@ function Calculator() {
     function onBtnClick(e) {
         const btnType = e.target.dataset.action;
         const btnValue = e.target.value;
-        // console.log(btnType, btnValue, output)
 
         switch (btnType) {
             case "allClear":
@@ -43,7 +43,7 @@ function Calculator() {
                     setSecondOperand, 
                     setOperator,
                     setPerformedOperation,
-                    setLastActionMemorySaved
+                    setLastActionMemorySaved,
                 );
                 break;
             case "clear":
@@ -54,7 +54,7 @@ function Calculator() {
                     setSecondOperand, 
                     setOperator,
                     setPerformedOperation,
-                    setLastActionMemorySaved
+                    setLastActionMemorySaved,
                 );
                 break; 
             case "number":
@@ -81,7 +81,7 @@ function Calculator() {
                     setOutput,
                     setFirstOperand,
                     setOperator,
-                    setPerformedOperation   
+                    setPerformedOperation,
                 );
                 break;
             case "equal":
@@ -108,6 +108,13 @@ function Calculator() {
                     setFirstOperand,
                     setLastActionMemorySaved,
                     setLastActionMemoryRecalled
+                );
+                break;
+            case "special-operator":
+                onSpecialOperatorClick(
+                    btnValue,
+                    output,
+                    setOutput,
                 );
                 break;
         }
